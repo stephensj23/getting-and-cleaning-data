@@ -28,32 +28,39 @@ Part 1: Average of the
         Activities Measured: 6 
         Observations: 180
 
-VARIABLE NAME    VARIABLE                   VALUES OR                 
-POSITION                                     EXPLANATION        
-xtrain <- read.table("train/X_train.txt")
-ytrain <- read.table("train/y_train.txt")
-subject.train <- read.table("train/subject_train.txt")
-training.data <- cbind(ytrain,xtrain)
-training.data <- cbind(subject.train,training.data)
-xtest <- read.table("test/X_test.txt")
-ytest <- read.table("test/y_test.txt")
-subject.test <- read.table("test/subject_test.txt")
-testing.data <- cbind(ytest,xtest)
-testing.data <- cbind(subject.test,testing.data)
-big.data <- rbind(testing.data,training.data)
-features <- read.table("features.txt",stringsAsFactors=FALSE)
-small.columns <- as.integer(c("1","2",grep("mean",colnames(big.data)),grep("std",colnames(big.data))))
-small.data <- big.data[,small.columns]
-activity.labels <- read.table("activity_labels.txt",stringsAsFactors=FALSE)
-activity.vector <- activity.labels$V2
-activity.names <- c(activity.names,activity.vector[small.data$activity[i]])
-small.data <- data.frame(activity.names,small.data, stringsAsFactors = FALSE)
-small.data <- subset(small.data,select=-activity)
-tall.data <- melt (small.data, id=c("subject","activity.names"))
-tidy.data <- dcast(tall.data, subject + activity.names ~ variable, fun.aggregate=mean)
-Feature Selection 
-=================
+VARIABLE                VALUES OR EXPLANATION        
+xtrain                  Data Frame holding the contents of the x_train.txt file
+ytrain                  Data Frame holding the contents of the y_train.txt file
+subject.train           Data Frame holding the contents of the subject_train.txt file
+training.data           Data Frame holding the combined contents of the xtrain, ytrain, and subject.train frames
+xtest                   Data Frame holding the contents of the X_test.txt file
+ytest                   Data Frame holding the contents of the y_test.txt file
+subject.test            Data Frame holding the contents of the subject_test.txt file
+testing.data            Data Frame holding the combined contents of the xtest, ytest, and subject.test frames
+big.data                Data Frame holding the contenst of the combined testing and training data. 
+                        10299 measurements x 563 variables
+features                Data Frame holding the contents of the features.txt file
+small.columns           Character array of the columns from big.data that include mean or std.
+small.data              Data frame that includes the small.columns from big.data
+                        10299 x 81. This varies from student to student depending on which "mean" variables were dropped 
+                        during processing.
+activity.labels         Data Frame holding the contents of the activity.txt file. Values ranged from 1-6 and included:
+                        1       WALKING
+                        2       WALKING_UPSTAIRS
+                        3       WALKING_DOWNSTAIRS
+                        4       SITTING
+                        5       STANDING
+                        6       LAYING
+activity.vector         Character array holding the contents of the readable version of the labels.
+activity.names          Character array holding the column names of the small.data set. Note that activity.names is the new 
+                        column header for activity.
+tall.data               Data frame containing the melted small.data set. The format is each row is a unique combination of                              subject/activity/variable with an accompanying value that can be processed numerically. This makes the                          data suitable for plotting or casting into a preferred format.
+                        813621 x 4.
+tidy.data               Data frame containing 180 observations for 81 variables. Each subject/activity combination has an
+                        average variable reported in a separate column.
 
+Description of the 79 Features Reported.
+*Taken directly from the source data README*
 The features selected for this database come from the accelerometer and gyroscope 3-axial raw signals tAcc-XYZ and tGyro-XYZ. These time domain signals (prefix 't' to denote time) were captured at a constant rate of 50 Hz. Then they were filtered using a median filter and a 3rd order low pass Butterworth filter with a corner frequency of 20 Hz to remove noise. Similarly, the acceleration signal was then separated into body and gravity acceleration signals (tBodyAcc-XYZ and tGravityAcc-XYZ) using another low pass Butterworth filter with a corner frequency of 0.3 Hz. 
 
 Subsequently, the body linear acceleration and angular velocity were derived in time to obtain Jerk signals (tBodyAccJerk-XYZ and tBodyGyroJerk-XYZ). Also the magnitude of these three-dimensional signals were calculated using the Euclidean norm (tBodyAccMag, tGravityAccMag, tBodyAccJerkMag, tBodyGyroMag, tBodyGyroJerkMag). 
@@ -85,6 +92,7 @@ The set of variables that were estimated from these signals are:
 
 mean(): Mean value
 std(): Standard deviation
+
 Additional vectors obtained by averaging the signals in a signal window sample. These are used on the angle() variable:
 
 gravityMean
